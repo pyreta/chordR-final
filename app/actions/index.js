@@ -28,6 +28,7 @@ const actionsAndTypes = createActionsAndTypes([
   'TOGGLE_SETTINGS',
   'CLOSE_SETTINGS',
   'TOGGLE_NEXT_CHORD',
+  'REGISTER_KEYBOARD_CHORD',
 ]);
 
 export const actionTypes = actionsAndTypes.actionTypes;

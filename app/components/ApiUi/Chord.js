@@ -40,11 +40,13 @@ const Container = styled.div`
   }
 `;
 
-const probabilityStyle = (probability, functional) => {
+const probabilityStyle = (probability, functional, held) => {
   let pixels = Math.floor(probability * 60);
   if (pixels < 5 && functional) pixels = 7;
   if (probability > 0 && probability < 0.01) pixels = 1;
-  return { boxShadow: `inset 0px -${pixels * 2}px 0px 0px #3c8aff` };
+  return held ?
+    { boxShadow: `inset 0px -${pixels * 2}px 0px 0px #3c8aff`, background: 'rgba(60, 138, 255, 0.34)' } :
+    { boxShadow: `inset 0px -${pixels * 2}px 0px 0px #3c8aff` };
 };
 
 const empty = {};
@@ -59,6 +61,7 @@ const Chord = ({
   voicingDecorator: decorator,
   isInverted,
   showRomanNumerals,
+  heldChord,
 }) => {
   let voicingDecorator = decorator;
   if (voicingDecorator === 'rootNote' && isInverted) voicingDecorator = 'bassNote';
@@ -67,12 +70,19 @@ const Chord = ({
   const percentNextChord = lastPlayedChord.nextChordProbability(decoratedChord, {
     showInversion: voicingDecorator !== 'rootNote'
   });
+  const chordName = chord.name({ showInversion: voicingDecorator !== 'rootNote' });
   const style = showNextChord
-    ? probabilityStyle(percentNextChord, lastPlayedChord.isGoodNextChord(decoratedChord))
+    ? probabilityStyle(
+      percentNextChord,
+      lastPlayedChord.isGoodNextChord(decoratedChord),
+      heldChord === chord.name()
+    )
     : empty;
   return (
     <Container
       onMouseDown={() => {
+        console.log(`chordName:`, chordName);
+        console.log(`heldChord:`, heldChord);
         onClick(notes, chord.unwrap());
       }}
       onMouseUp={() => onStop(allNotes)}
@@ -85,7 +95,7 @@ const Chord = ({
         />
       )}
       {showRomanNumerals ? (
-        <Name>{chord.name({ showInversion: voicingDecorator !== 'rootNote' })}</Name>
+        <Name>{chordName}</Name>
       ) : (
         <NameNoRoman>{chord.name({ showInversion: voicingDecorator !== 'rootNote' })}</NameNoRoman>
       )}
@@ -96,11 +106,13 @@ const Chord = ({
 const mapStateToProps = ({
   lastPlayedChord,
   voicingDecorator,
+  heldChord,
   settings
 }) => ({
   lastPlayedChord: new ChordModel(lastPlayedChord),
   showNextChord: !!lastPlayedChord.notes && settings.showNextChord,
   voicingDecorator,
+  heldChord,
   showRomanNumerals: settings.showRomanNumerals,
 });
 

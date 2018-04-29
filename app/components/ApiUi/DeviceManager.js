@@ -35,8 +35,8 @@ const DeviceSelect = props => (
         Select a MIDI device
       </option>
 
-      {props.devices.map((device, idx) => (
-        <option value={device.id} key={idx}>
+      {props.devices.map((device) => (
+        <option value={device.id} key={`${device.manufacturer} ${device.name}`}>
           {`${device.manufacturer} ${device.name}`}
         </option>
       ))}

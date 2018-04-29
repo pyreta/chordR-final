@@ -3,11 +3,16 @@ import { connect } from 'react-redux';
 import actions from '../../actions';
 import mapScale, { getScaleDegree } from '../../helpers/mapScale';
 
-const modeIndexMap = { 1: 0, 3: 1, 6: 2, 8: 3, 10: 4 };
+const modeIndexMap = {
+  1: 0, 3: 1, 6: 2, 8: 3, 10: 4
+};
 
-const getChord = ({ note, voicingDecorator, rows, selectedModeRow }) => {
+const getChord = ({
+  note, voicingDecorator, rows, selectedModeRow, registerChordOnKeyboard
+}) => {
   const scaleDegree = getScaleDegree(note.number);
   const chord = rows[selectedModeRow][scaleDegree];
+  registerChordOnKeyboard(chord.name());
   if (chord) {
     const notes = chord.decorate[voicingDecorator]()
       .voicing()
@@ -16,14 +21,9 @@ const getChord = ({ note, voicingDecorator, rows, selectedModeRow }) => {
   }
 };
 
-const getNewNote = props => {
-  return props.note.number < 48
-    ? getChord(props)
-    : mapScale(
-        props.note.number,
-        props.rows[props.selectedModeRow][0].unwrap(),
-      );
-};
+const getNewNote = props => props.note.number < 48
+  ? getChord(props)
+  : mapScale(props.note.number, props.rows[props.selectedModeRow][0].unwrap());
 
 export const connectMidiController = ({
   newDevice,
@@ -32,6 +32,8 @@ export const connectMidiController = ({
   selectedModeRow,
   voicingDecorator,
   rows,
+  registerChordOnKeyboard,
+  removeChordOnKeyboard
 }) => {
   inputDevice.removeListener('noteoff');
   inputDevice.removeListener('noteon');
@@ -48,6 +50,7 @@ export const connectMidiController = ({
       note,
       selectedModeRow,
       voicingDecorator,
+      registerChordOnKeyboard
     });
 
     if (newNote) {
@@ -70,17 +73,16 @@ export const connectMidiController = ({
       note,
       selectedModeRow,
       voicingDecorator,
+      registerChordOnKeyboard: removeChordOnKeyboard
     });
 
     if (newNote) {
       outputDevice.stopNote(newNote, 1);
-      return;
     }
   });
 };
 
 export class DeviceSetup extends React.Component {
-
   constructor(props) {
     super(props);
     connectMidiController(props);
@@ -101,11 +103,13 @@ export class DeviceSetup extends React.Component {
 const mapStateToProps = ({ devices, voicingDecorator, selectedModeRow }) => ({
   devices,
   voicingDecorator,
-  selectedModeRow,
+  selectedModeRow
 });
 
 const mapDispatchToProps = dispatch => ({
   selectModeRow: idx => dispatch(actions.SELECT_MODE_ROW(idx)),
+  registerChordOnKeyboard: name => dispatch(actions.REGISTER_KEYBOARD_CHORD(name)),
+  removeChordOnKeyboard: () => dispatch(actions.REGISTER_KEYBOARD_CHORD(null)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DeviceSetup);

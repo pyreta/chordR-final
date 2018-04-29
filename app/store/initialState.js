@@ -24,6 +24,7 @@ export default {
   modeRowIndex: 0,
   keysPressed: {},
   voicingDecorator: 'rootNote',
+  heldChord: null,
   progression,
   modeRows: {
     // major: {1: true},
