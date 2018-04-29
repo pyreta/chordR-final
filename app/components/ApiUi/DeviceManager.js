@@ -44,16 +44,16 @@ const DeviceSelect = props => (
   </Div2>
 );
 
-export class DeviceManager extends React.Component {
-  getDevice(id, type) {
-    return WebMidi[`get${type[0].toUpperCase()}${type.slice(1)}ById`](id);
-  }
+const getDevice = (id, type) =>
+  WebMidi[`get${type[0].toUpperCase()}${type.slice(1)}ById`](id);
 
+export class DeviceManager extends React.Component {
   setDevice(id, type) {
-    const newDevice = this.getDevice(id, type);
+    const newDevice = getDevice(id, type);
     this.props.setDevice({ [`${type}Device`]: newDevice });
-    type === 'input' &&
+    if (type === 'input') {
       this.props.connectMidiController({ newDevice, ...this.props });
+    }
   }
 
   render() {

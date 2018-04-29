@@ -1,24 +1,29 @@
 import React, { Component } from 'react';
 import WebMidi from 'webmidi';
+import { connect } from 'react-redux';
 import noOpMidiDevice from '../../helpers/noOpMidiDevice';
 // import { defaultdeviceIds } from '../../constants';
 import actions from '../../actions';
-import { connect } from 'react-redux';
 
 
 class MidiDeviceSetup extends Component {
+  componentWillMount() {
+    this.setupWebMidiAPI();
+  }
+
   loadDevices() {
     const devices = {
       inputDevice:
         // noOpMidiDevice,
         WebMidi.inputs[WebMidi.inputs.length - 1] || noOpMidiDevice,
-        // WebMidi.getInputById(defaultdeviceIds.midiDevice) || noOpMidiDevice,
+      // WebMidi.getInputById(defaultdeviceIds.midiDevice) || noOpMidiDevice,
       dawListener:
         WebMidi.inputs[0] || noOpMidiDevice,
-        // WebMidi.getInputById(defaultdeviceIds.dawListener) || noOpMidiDevice,
-      outputDevice:
-        WebMidi.outputs.length === 2 ? noOpMidiDevice : WebMidi.outputs[1]
-        // WebMidi.getOutputById(defaultdeviceIds.outputDevice) || noOpMidiDevice
+      // WebMidi.getInputById(defaultdeviceIds.dawListener) || noOpMidiDevice,
+      outputDevice: noOpMidiDevice
+      // outputDevice:
+      // WebMidi.outputs.length === 2 ? noOpMidiDevice : WebMidi.outputs[1]
+      // WebMidi.getOutputById(defaultdeviceIds.outputDevice) || noOpMidiDevice
     };
 
     this.props.loadDevices(devices);
@@ -27,16 +32,12 @@ class MidiDeviceSetup extends Component {
   setupWebMidiAPI() {
     WebMidi.enable(err => {
       if (err) {
-        this.props.webMidiError(err)
+        this.props.webMidiError(err);
       } else {
         this.loadDevices();
         this.props.enableWebMidi();
       }
     });
-  }
-
-  componentWillMount() {
-    this.setupWebMidiAPI();
   }
 
   render() {
