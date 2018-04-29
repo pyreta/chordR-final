@@ -81,8 +81,6 @@ const Chord = ({
   return (
     <Container
       onMouseDown={() => {
-        console.log(`chordName:`, chordName);
-        console.log(`heldChord:`, heldChord);
         onClick(notes, chord.unwrap());
       }}
       onMouseUp={() => onStop(allNotes)}

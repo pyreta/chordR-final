@@ -72,7 +72,7 @@ export class ModeRows extends React.Component {
         {this.props.rows.map((mode, idx) => {
           const name = mode[0].getMode().name();
           return (
-            <ScaleContainer key={name}>
+            <ScaleContainer key={`${name}${idx + 1}`}>
               <ModeName
                 isSelected={this.props.selectedModeRow === idx}
                 onClick={() => this.props.selectModeRow(idx)}
