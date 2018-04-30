@@ -12,7 +12,7 @@ const getChord = ({
 }) => {
   const scaleDegree = getScaleDegree(note.number);
   const chord = rows[selectedModeRow][scaleDegree];
-  registerChordOnKeyboard(chord.name());
+  // registerChordOnKeyboard(chord.name());
   if (chord) {
     const notes = chord.decorate[voicingDecorator]()
       .voicing()

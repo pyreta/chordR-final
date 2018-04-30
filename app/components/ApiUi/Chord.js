@@ -44,9 +44,10 @@ const probabilityStyle = (probability, functional, held) => {
   let pixels = Math.floor(probability * 60);
   if (pixels < 5 && functional) pixels = 7;
   if (probability > 0 && probability < 0.01) pixels = 1;
-  return held ?
-    { boxShadow: `inset 0px -${pixels * 2}px 0px 0px #3c8aff`, background: 'rgba(60, 138, 255, 0.34)' } :
-    { boxShadow: `inset 0px -${pixels * 2}px 0px 0px #3c8aff` };
+  return { boxShadow: `inset 0px -${pixels * 2}px 0px 0px #3c8aff` };
+  // return held ?
+  //   { boxShadow: `inset 0px -${pixels * 2}px 0px 0px #3c8aff`, background: 'rgba(60, 138, 255, 0.34)' } :
+  //   { boxShadow: `inset 0px -${pixels * 2}px 0px 0px #3c8aff` };
 };
 
 const empty = {};
