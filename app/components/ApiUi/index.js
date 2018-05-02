@@ -197,10 +197,21 @@ export class ApiUi extends React.Component {
     this.setState({ voicePreviousChord: !this.state.voicePreviousChord })
   )
 
+  toggleBypass = () => (
+    this.setState({ bypass: !this.state.bypass })
+  )
+
   ColumnDropdown = ({ rows }) => {
     const isInverted = !!this.inversion();
     return (
       <DropdownWrapper>
+        <SettingsOption onClick={this.toggleBypass}>
+          <Check visible={this.state.bypass}>
+            <Icons.Check size={11} />
+          </Check>
+          Bypass Chord Board
+        </SettingsOption>
+
         <SettingsOption onClick={this.props.toggleRomanNumerals}>
           <Check visible={this.props.showRomanNumerals}>
             <Icons.Check size={11} />
@@ -377,7 +388,7 @@ export class ApiUi extends React.Component {
           {this.props.showSettingsDropdown && <this.ColumnDropdown rows={chordRows} />}
         </div>
         <MidiDeviceSetup rows={chordRows}>
-          <DeviceSetupComponent rows={chordRows} />
+          <DeviceSetupComponent rows={chordRows} bypass={this.state.bypass} />
           <Wrapper>
             {this.props.showScales && <ModeSelectComponent />}
             <KeySelect

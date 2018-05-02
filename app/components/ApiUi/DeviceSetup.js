@@ -4,7 +4,11 @@ import actions from '../../actions';
 import mapScale, { getScaleDegree } from '../../helpers/mapScale';
 
 const modeIndexMap = {
-  1: 0, 3: 1, 6: 2, 8: 3, 10: 4
+  1: 0,
+  3: 1,
+  6: 2,
+  8: 3,
+  10: 4
 };
 
 const getChord = ({
@@ -21,9 +25,10 @@ const getChord = ({
   }
 };
 
-const getNewNote = props => props.note.number < 48
-  ? getChord(props)
-  : mapScale(props.note.number, props.rows[props.selectedModeRow][0].unwrap());
+const getNewNote = props =>
+  props.note.number < 48
+    ? getChord(props)
+    : mapScale(props.note.number, props.rows[props.selectedModeRow][0].unwrap());
 
 export const connectMidiController = ({
   newDevice,
@@ -33,7 +38,8 @@ export const connectMidiController = ({
   voicingDecorator,
   rows,
   registerChordOnKeyboard,
-  removeChordOnKeyboard
+  removeChordOnKeyboard,
+  bypass
 }) => {
   inputDevice.removeListener('noteoff');
   inputDevice.removeListener('noteon');
@@ -45,13 +51,15 @@ export const connectMidiController = ({
   }
   device.addListener('noteon', 'all', e => {
     const { note, velocity } = e;
-    const newNote = getNewNote({
-      rows,
-      note,
-      selectedModeRow,
-      voicingDecorator,
-      registerChordOnKeyboard
-    });
+    const newNote = bypass
+      ? note.number
+      : getNewNote({
+        rows,
+        note,
+        selectedModeRow,
+        voicingDecorator,
+        registerChordOnKeyboard
+      });
 
     if (newNote) {
       outputDevice.playNote(newNote, 1, { velocity });
@@ -68,17 +76,27 @@ export const connectMidiController = ({
   });
   device.addListener('noteoff', 'all', e => {
     const { note } = e;
-    const newNote = getNewNote({
-      rows,
-      note,
-      selectedModeRow,
-      voicingDecorator,
-      registerChordOnKeyboard: removeChordOnKeyboard
-    });
+    const newNote = bypass
+      ? note.number
+      : getNewNote({
+        rows,
+        note,
+        selectedModeRow,
+        voicingDecorator,
+        registerChordOnKeyboard: removeChordOnKeyboard
+      });
 
     if (newNote) {
       outputDevice.stopNote(newNote, 1);
     }
+  });
+
+  device.addListener('pitchbend', 'all', e => {
+    outputDevice.sendPitchBend(e.value, 1);
+  });
+
+  device.addListener('controlchange', 'all', e => {
+    outputDevice.sendControlChange(e.controller.name, e.value, 1);
   });
 };
 
@@ -109,7 +127,7 @@ const mapStateToProps = ({ devices, voicingDecorator, selectedModeRow }) => ({
 const mapDispatchToProps = dispatch => ({
   selectModeRow: idx => dispatch(actions.SELECT_MODE_ROW(idx)),
   registerChordOnKeyboard: name => dispatch(actions.REGISTER_KEYBOARD_CHORD(name)),
-  removeChordOnKeyboard: () => dispatch(actions.REGISTER_KEYBOARD_CHORD(null)),
+  removeChordOnKeyboard: () => dispatch(actions.REGISTER_KEYBOARD_CHORD(null))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DeviceSetup);
