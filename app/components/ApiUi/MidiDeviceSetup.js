@@ -12,18 +12,12 @@ class MidiDeviceSetup extends Component {
   }
 
   loadDevices() {
+    const inputDevice = WebMidi.inputs.filter(i => !i.name.includes('IAC'))[0] || noOpMidiDevice;
+    const outputDevice = WebMidi.outputs.filter(i => i.name.includes('ChordBoard'))[0] || noOpMidiDevice;
     const devices = {
-      inputDevice:
-        // noOpMidiDevice,
-        WebMidi.inputs[WebMidi.inputs.length - 1] || noOpMidiDevice,
-      // WebMidi.getInputById(defaultdeviceIds.midiDevice) || noOpMidiDevice,
-      dawListener:
-        WebMidi.inputs[0] || noOpMidiDevice,
-      // WebMidi.getInputById(defaultdeviceIds.dawListener) || noOpMidiDevice,
-      outputDevice: noOpMidiDevice
-      // outputDevice:
-      // WebMidi.outputs.length === 2 ? noOpMidiDevice : WebMidi.outputs[1]
-      // WebMidi.getOutputById(defaultdeviceIds.outputDevice) || noOpMidiDevice
+      inputDevice,
+      dawListener: noOpMidiDevice,
+      outputDevice,
     };
 
     this.props.loadDevices(devices);

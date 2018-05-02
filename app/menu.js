@@ -40,13 +40,13 @@ export default class MenuBuilder {
 
   buildDarwinTemplate() {
     const subMenuAbout = {
-      label: 'ChordR',
+      label: 'ChordBoard',
       submenu: [
-        { label: 'About ChordR', selector: 'orderFrontStandardAboutPanel:' },
+        { label: 'About ChordBoard', selector: 'orderFrontStandardAboutPanel:' },
         { type: 'separator' },
         { label: 'Services', submenu: [] },
         { type: 'separator' },
-        { label: 'Hide ChordR', accelerator: 'Command+H', selector: 'hide:' },
+        { label: 'Hide ChordBoard', accelerator: 'Command+H', selector: 'hide:' },
         { label: 'Hide Others', accelerator: 'Command+Shift+H', selector: 'hideOtherApplications:' },
         { label: 'Show All', selector: 'unhideAllApplications:' },
         { type: 'separator' },

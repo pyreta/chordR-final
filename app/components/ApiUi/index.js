@@ -175,7 +175,7 @@ const SettingsOption = styled.div`
 export class ApiUi extends React.Component {
   constructor() {
     super();
-    this.state = {};
+    this.state = { voicePreviousChord: false };
   }
 
   componentDidMount() {
@@ -192,6 +192,10 @@ export class ApiUi extends React.Component {
       this.props.closeSettings();
     }
   };
+
+  toggleVoicePreviousChord = () => (
+    this.setState({ voicePreviousChord: !this.state.voicePreviousChord })
+  )
 
   ColumnDropdown = ({ rows }) => {
     const isInverted = !!this.inversion();
@@ -235,6 +239,13 @@ export class ApiUi extends React.Component {
             <Icons.Check size={11} />
           </Check>
           Auto voicing
+        </SettingsOption>
+
+        <SettingsOption onClick={this.toggleVoicePreviousChord}>
+          <Check visible={this.state.voicePreviousChord}>
+            <Icons.Check size={11} />
+          </Check>
+          Voice previous chord
         </SettingsOption>
 
         <SettingsOption onClick={this.props.toggleScales}>
@@ -325,6 +336,7 @@ export class ApiUi extends React.Component {
 
     const inversion = this.inversion();
     const secondary = this.secondary();
+    const chordToVoice = this.state.voicePreviousChord ? lastPlayedChord : new ChordModel();
     return Object.keys(modeRows).reduce((acc, scale) => {
       const scaleModes = Object.keys(modeRows[scale])
         .filter(mode => modeRows[scale][mode])
@@ -343,7 +355,7 @@ export class ApiUi extends React.Component {
               autoVoicing && inversion < 1
                 ? c
                   .secondary(secondary)
-                  .matchVoicingToChord({ lastPlayedChord, method: 'bijective' })
+                  .matchVoicingToChord({ lastPlayedChord: chordToVoice, method: 'bijective' })
                 : c.secondary(secondary).matchOctaveToChord(lastPlayedChord);
             return voicedChord;
           });
