@@ -12,7 +12,8 @@ const modeIndexMap = {
 };
 
 const getChord = ({
-  note, voicingDecorator, rows, selectedModeRow, registerChordOnKeyboard
+  note, voicingDecorator, rows, selectedModeRow
+  // note, voicingDecorator, rows, selectedModeRow, registerChordOnKeyboard
 }) => {
   const scaleDegree = getScaleDegree(note.number);
   const chord = rows[selectedModeRow][scaleDegree];

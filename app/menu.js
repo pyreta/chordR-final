@@ -42,14 +42,16 @@ export default class MenuBuilder {
     const subMenuAbout = {
       label: 'ChordBoard',
       submenu: [
-        { label: 'About ChordBoard', selector: 'orderFrontStandardAboutPanel:' },
+        { label: 'Show ChordBoard', click: () => { this.mainWindow.show(); } },
+        { label: 'Hide ChordBoard', click: () => { this.mainWindow.hide(); } },
+        // { label: 'About ChordBoard', selector: 'orderFrontStandardAboutPanel:' },
         { type: 'separator' },
-        { label: 'Services', submenu: [] },
-        { type: 'separator' },
-        { label: 'Hide ChordBoard', accelerator: 'Command+H', selector: 'hide:' },
-        { label: 'Hide Others', accelerator: 'Command+Shift+H', selector: 'hideOtherApplications:' },
-        { label: 'Show All', selector: 'unhideAllApplications:' },
-        { type: 'separator' },
+        // { label: 'Services', submenu: [] },
+        // { type: 'separator' },
+        // { label: 'Hide ChordBoard', accelerator: 'Command+H', selector: 'hide:' },
+        // { label: 'Hide Others', accelerator: 'Command+Shift+H', selector: 'hideOtherApplications:' },
+        // { label: 'Show All', selector: 'unhideAllApplications:' },
+        // { type: 'separator' },
         { label: 'Quit', accelerator: 'Command+Q', click: () => { app.quit(); } }
       ]
     };
@@ -102,9 +104,9 @@ export default class MenuBuilder {
 
     return [
       subMenuAbout,
-      subMenuEdit,
-      subMenuView,
-      subMenuWindow,
+      // subMenuEdit,
+      // subMenuView,
+      // subMenuWindow,
       subMenuHelp
     ];
   }

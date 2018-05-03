@@ -14,7 +14,7 @@ import { app, BrowserWindow } from 'electron';
 import MenuBuilder from './menu';
 
 let mainWindow = null;
-
+let willQuitApp = false;
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
   sourceMapSupport.install();
@@ -48,9 +48,13 @@ const installExtensions = async () => {
 app.on('window-all-closed', () => {
   // Respect the OSX convention of having the application in memory even
   // after all windows have been closed
+
   if (process.platform !== 'darwin') {
     app.quit();
   }
+
+  // or actually don't
+  // app.quit();
 });
 
 
@@ -62,7 +66,8 @@ app.on('ready', async () => {
   mainWindow = new BrowserWindow({
     show: false,
     width: 680,
-    height: 560
+    height: 560,
+    alwaysOnTop: true
   });
 
   mainWindow.loadURL(`file://${__dirname}/app.html`);
@@ -77,9 +82,23 @@ app.on('ready', async () => {
     mainWindow.focus();
   });
 
-  mainWindow.on('closed', () => {
-    mainWindow = null;
+  // mainWindow.on('closed', () => {
+  //   mainWindow = null;
+  // });
+
+  mainWindow.on('close', (e) => {
+    if (willQuitApp) {
+      /* the user tried to quit the app */
+      mainWindow = null;
+    } else {
+      /* the user only tried to close the window */
+      e.preventDefault();
+      mainWindow.hide();
+    }
   });
+
+  app.on('activate', () => mainWindow.show());
+  app.on('before-quit', () => willQuitApp = true);
 
   const menuBuilder = new MenuBuilder(mainWindow);
   menuBuilder.buildMenu();
