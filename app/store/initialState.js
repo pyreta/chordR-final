@@ -35,7 +35,7 @@ export default {
     // melodicMinor: {1: true},
   },
   settings: {
-    showRomanNumerals: false,
+    showRomanNumerals: true,
     showNextChord: true,
     showDeviceSetup: true,
     showScales: false
