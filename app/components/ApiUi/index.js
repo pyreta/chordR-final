@@ -295,14 +295,14 @@ export class ApiUi extends React.Component {
           1: 0, 4: 0, 5: 0
         });
       }
-      if (e.key === '7') {
-        this.props.addNotes({
-          1: 0, 3: 0, 5: 0, 7: 0
-        });
-      }
       if (e.key === '6') {
         this.props.addNotes({
           1: 0, 3: 0, 5: 0, 6: 0
+        });
+      }
+      if (e.key === '7') {
+        this.props.addNotes({
+          1: 0, 3: 0, 5: 0, 7: 0
         });
       }
       if (e.key === '9') {
