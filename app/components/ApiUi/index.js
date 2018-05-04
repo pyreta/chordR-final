@@ -295,6 +295,15 @@ export class ApiUi extends React.Component {
     return this.props.changeKey((this.props.tonic + 1) % 12);
   }
 
+  decreaseMode() {
+    const newRow = this.props.selectedModeRow === 0 ? this.numberOfChordRows - 1 : this.props.selectedModeRow - 1;
+    this.props.selectModeRow(newRow);
+  }
+
+  increaseMode() {
+    this.props.selectModeRow((this.props.selectedModeRow + 1) % this.numberOfChordRows);
+  }
+
   setupKeyBindings() {
     const keyNotes = {
       84: 57 + 12,
@@ -359,6 +368,8 @@ export class ApiUi extends React.Component {
       }
       if (e.keyCode === 37) this.decreaseKey();
       if (e.keyCode === 39) this.increaseKey();
+      if (e.keyCode === 38) this.decreaseMode();
+      if (e.keyCode === 40) this.increaseMode();
       if (e.key === 'a') this.props.toggleAutoVoicing();
     });
     document.addEventListener('keyup', e => {
@@ -447,6 +458,7 @@ export class ApiUi extends React.Component {
 
   render() {
     const chordRows = this.chordRows();
+    this.numberOfChordRows = chordRows.length;
     return (
       <div>
         <div ref={el => (this.dropdownEl = el)}>
@@ -527,6 +539,7 @@ const mapDispatchToProps = dispatch => ({
   toggleNextChord: () => dispatch(actions.TOGGLE_NEXT_CHORD()),
   toggleScales: () => dispatch(actions.TOGGLE_SCALES()),
   toggleDeviceSetup: () => dispatch(actions.TOGGLE_DEVICE_SETUP()),
+  selectModeRow: row => dispatch(actions.SELECT_MODE_ROW(row)),
 
   toggleRootNoteDecorator: () => dispatch(actions.TOGGLE_VOICING_DECORATOR('rootNote')),
   toggleBassNoteDecorator: () => dispatch(actions.TOGGLE_VOICING_DECORATOR('bassNote'))
