@@ -14,6 +14,20 @@ import * as Icons from './Icons';
 import DeviceManagerComponent from './DeviceManager';
 import DeviceSetupComponent, { connectMidiController } from './DeviceSetup';
 
+import mapScale from '../../helpers/mapScale';
+
+const getChordFromNum = ({
+  scaleDegree, voicingDecorator, rows, selectedModeRow
+}) => {
+  const chord = rows[selectedModeRow][scaleDegree - 1];
+  if (chord) {
+    const notes = chord.decorate[voicingDecorator]()
+      .voicing()
+      .noteValues();
+    return notes;
+  }
+};
+
 // document.addEventListener('keydown', e => {
 //   // keyCache[e.key] = true;
 //   if (e.key === '4') {
@@ -282,30 +296,63 @@ export class ApiUi extends React.Component {
   }
 
   setupKeyBindings() {
+    const keyNotes = {
+      84: 57 + 12,
+      89: 59 + 12,
+      85: 60 + 12,
+      73: 62 + 12,
+      79: 64 + 12,
+      80: 65 + 12,
+      219: 67 + 12,
+      221: 69 + 12,
+      220: 71 + 12,
+    };
     document.addEventListener('keydown', e => {
       if (this.state[e.key]) return;
       this.setState({ [e.key]: true });
-      if (e.key === '2') {
+
+      const scaleDegree = parseInt(e.key, 10);
+      if (scaleDegree > 0 && scaleDegree < 8) {
+        const chord = getChordFromNum({
+          scaleDegree,
+          voicingDecorator: this.props.voicingDecorator,
+          rows: this.chordRows(),
+          selectedModeRow: this.props.selectedModeRow
+        });
+        this.props.playChord(chord);
+        return;
+      }
+
+      if (keyNotes[e.keyCode]) {
+        const note = mapScale(
+          keyNotes[e.keyCode],
+          this.chordRows()[this.props.selectedModeRow][0].unwrap()
+        );
+        this.props.playChord(note);
+        return;
+      }
+
+      if (e.key === 'z') {
         this.props.addNotes({
           1: 0, 2: 0, 5: 0
         });
       }
-      if (e.key === '4') {
+      if (e.key === 'x') {
         this.props.addNotes({
           1: 0, 4: 0, 5: 0
         });
       }
-      if (e.key === '6') {
+      if (e.key === 'c') {
         this.props.addNotes({
           1: 0, 3: 0, 5: 0, 6: 0
         });
       }
-      if (e.key === '7') {
+      if (e.key === 'v') {
         this.props.addNotes({
           1: 0, 3: 0, 5: 0, 7: 0
         });
       }
-      if (e.key === '9') {
+      if (e.key === 'b') {
         this.props.addNotes({
           1: 0, 3: 0, 5: 0, 9: 0
         });
@@ -315,7 +362,29 @@ export class ApiUi extends React.Component {
       if (e.key === 'a') this.props.toggleAutoVoicing();
     });
     document.addEventListener('keyup', e => {
+      const scaleDegree = parseInt(e.key, 10);
       this.setState({ [e.key]: false });
+
+      if (scaleDegree > 0 && scaleDegree < 8) {
+        const chord = getChordFromNum({
+          scaleDegree,
+          voicingDecorator: this.props.voicingDecorator,
+          rows: this.chordRows(),
+          selectedModeRow: this.props.selectedModeRow
+        });
+        this.props.stopChord(chord);
+        return;
+      }
+
+      if (keyNotes[e.keyCode]) {
+        const note = mapScale(
+          keyNotes[e.keyCode],
+          this.chordRows()[this.props.selectedModeRow][0].unwrap()
+        );
+        this.props.stopChord(note);
+        return;
+      }
+
       this.props.addNotes({ 1: 0, 3: 0, 5: 0 });
     });
   }
