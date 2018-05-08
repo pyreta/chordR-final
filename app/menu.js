@@ -105,7 +105,7 @@ export default class MenuBuilder {
     return [
       subMenuAbout,
       // subMenuEdit,
-      // subMenuView,
+      subMenuView,
       // subMenuWindow,
       subMenuHelp
     ];
