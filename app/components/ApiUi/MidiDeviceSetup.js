@@ -12,7 +12,10 @@ class MidiDeviceSetup extends Component {
   }
 
   loadDevices() {
-    const inputDevice = WebMidi.inputs.filter(i => !i.name.includes('IAC'))[0] || noOpMidiDevice;
+    const inputDevice =
+      WebMidi.inputs.filter(i => i.manufacturer === 'Roland')[0] ||
+      WebMidi.inputs.filter(i => !i.name.includes('IAC'))[0] ||
+      noOpMidiDevice;
     const outputDevice = WebMidi.outputs.filter(i => i.name.includes('ChordBoard'))[0] || noOpMidiDevice;
     const devices = {
       inputDevice,
